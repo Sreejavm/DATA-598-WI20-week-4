@@ -1,0 +1,104 @@
+---
+title: "In class Activity"
+subtitle: "Advanced R Markdown"
+author: "Sreeja Vishaly Manohar"
+date: "`r Sys.Date()`"
+output:
+  tufte::tufte_html: default
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+bibliography: citations.bib
+link-citations: yes
+---
+
+# 2 In-Text Citations - BibTex
+
+Recent Star wars movie is -  [@starwars9], 
+
+A book on the same - [@starwars9book].
+
+We will be analyzing the Star Wars data set, which is already loaded into tidyverse and has:
+
+# Chunk with 3+ settings
+
+```{r setup, include=FALSE}
+# invalidate cache when the tufte version changes
+knitr::opts_chunk$set(
+  tidy = FALSE,
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  cache.extra = packageVersion('tufte')
+)
+options(htmltools.dir.version = FALSE)
+```
+
+```{r load-libraries}
+library(tufte)
+library(tidyverse)
+library(here)
+```
+
+
+# Using code from external r script
+```{r read-external-code}
+knitr::read_chunk("some_r_code.R") 
+```
+
+# Dataset - starwars data
+
+```{r}
+print(starwars)
+```
+
+# Table from starwars data
+
+In the following table we identify the species with the most characters in the Star Wars universe.
+
+```{r starwars-tbl}
+starwars %>%
+  group_by(species) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  top_n(5) %>%
+  knitr::kable(caption="A table of starwars data.")
+
+```
+
+
+# Visualization Plots using Tidyverse and starwars dataset
+
+```{r define-function}
+viz_density <- function(df, var){
+  ggplot(data = df,
+         mapping = aes(x = {{var}}))+
+  geom_density()+
+  theme_bw()
+}
+```
+
+## Distribution of height
+
+```{r starwars-plot-height, fig.cap = "A density plot of the variable height."}
+viz_density(starwars, height)
+```
+
+## Distribution of mass
+
+```{r starwars-plot-mass, fig.cap = "A density plot of the variable mass."}
+viz_density(starwars, mass)
+```
+
+# Using cached data
+
+```{r starwars-img, fig.align='center', cache=TRUE}
+#trying the here package
+knitr::include_graphics(here("image.jpeg"))
+```
+
+`r tufte::quote_footer('--- Yoda looking like teddy bear --- ')`
